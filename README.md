@@ -1,0 +1,4 @@
+DistFW
+======
+
+Distributed Frank-Wolfe
