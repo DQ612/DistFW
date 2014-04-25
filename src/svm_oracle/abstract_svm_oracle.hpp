@@ -1,6 +1,8 @@
 // Author: Dai Wei (wdai@cs.cmu.edu)
 // Date: 2014.04.25
 
+#include "common.hpp"
+
 namespace fw {
 
 
