@@ -19,6 +19,12 @@ class ChainOracle : public AbstractSVMOracle {
 
         ChainOracle(){}
 
+    private:
+        Feature logDecode(
+                const std::vector<double>& logNodePot, 
+                const std::vector<double>& logEdgePot,
+                const unsigned num_y_states,
+                const unsigned num_nodes);
 };
 
 }
