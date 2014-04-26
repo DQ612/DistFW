@@ -10,7 +10,7 @@ class AbstractSVMOracle {
 public:
   // Compute the feature map \phi in sparse format (SpFeature) based on dense
   // data feature x and the associated label y.
-  virtual SpFeature GenerateFeatureMap(const Feature& x, const Feature& y) = 0;
+  virtual Feature GenerateFeatureMap(const Feature& x, const Feature& y) = 0;
 
   // Compute structural loss between the true and predicted labels.
   virtual double Loss(const Feature& y_truth, const Feature& y_predict) = 0;

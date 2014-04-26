@@ -10,7 +10,7 @@ namespace fw {
 
 class ChainOracle : public AbstractSVMOracle {
     public:
-        SpFeature GenerateFeatureMap(const Feature& x, const Feature& y);
+        Feature GenerateFeatureMap(const Feature& x, const Feature& y);
 
         double Loss(const Feature& y_truth, const Feature& y_predict);
 
