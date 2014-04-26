@@ -1,10 +1,11 @@
 #include "chain_oracle.hpp"
+#include <string>
 
 using namespace fw;
 using namespace std;
 
-Feature ChainOracle::GenerateFeatureMap(const Feature& x, const Feature& y){
-    return Feature();
+SpFeature ChainOracle::GenerateFeatureMap(const Feature& x, const Feature& y){
+    return SpFeature();
 }
 
 double ChainOracle::Loss(const Feature& y_truth, const Feature& y_predict){
