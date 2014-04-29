@@ -1,4 +1,4 @@
-function [model, progress] = solverBCFW(param, options)
+function [model, progress, stats] = solverBCFW(param, options)
 % [model, progress] = solverBCFW(param, options)
 %
 % Solves the structured support vector machine (SVM) using the block-coordinate
@@ -228,7 +228,7 @@ tic();
 
 
 % === Main loop ====
-tau=max(1, floor(options.tau * n));
+tau=min(max(1, floor(options.tau * n)),n);
 k=0; % same k as in paper
 gap_check_counter = 1; % keeps track of how many passes through the data since last duality gap check...
 for p=1:options.num_passes
@@ -237,14 +237,18 @@ for p=1:options.num_passes
     S = perm(1:tau);
     sumw = 0;
     sumell = 0;
-
+    
+    w_tilde = model.w; % reference iterate
+    model_tilde.w = w_tilde;    
+    
     for dummy = 1:tau
         % (each numbered comment correspond to a line in algorithm 4)
         % 1) Picking random example:
         i = S(dummy);
     
         % 2) solve the loss-augmented inference for point i
-        ystar_i = maxOracle(param, model, patterns{i}, labels{i});
+        % the workers have the reference w only
+        ystar_i = maxOracle(param, model_tilde, patterns{i}, labels{i});
                 
         % 3) define the update quantities:
         % [note that lambda*w_s is subgradient of 1/n*H_i(w) ]
@@ -257,20 +261,24 @@ for p=1:options.num_passes
 
         % sanity check, if this assertion fails, probably there is a bug in the
         % maxOracle or in the featuremap
-        assert((loss_i - model.w'*psi_i) >= -1e-12);
+        assert((loss_i - w_tilde'*psi_i) >= -1e-12);  
+    
+        % 4) get the step-size gamma:        
+        gamma = 2*n*tau/(k*tau^2 +2*n);
         
-        % update (s-w)
-        sumw = sumw + w_s;
-        sumell = sumell + ell_s;
+        % 5-6-7-8) finally update the weights and ell variables
+        % workers send w_s, ell_s to server and server computes
+        % w^{k+1}_i and l^{k+1}_i and finally w^{k+1} as follows
+        model.w = model.w - wMat(:,i); % this is w^(k)-w_i^(k)
+        wMat(:,i) = (1-gamma)*wMat(:,i) + gamma*w_s;
+        model.w = model.w + wMat(:,i); % this is w^(k+1) = w^(k)-w_i^(k)+w_i^(k+1)
         
+        ell = ell - ellMat(i); % this is ell^(k)-ell_i^(k)
+        ellMat(i) = (1-gamma)*ellMat(i) + gamma*ell_s;
+        ell = ell + ellMat(i); % this is ell^(k+1) = ell^(k)-ell_i^(k)+ell_i^(k+1)
+
     end     
-        
-    % 4) get the step-size gamma:        
-    gamma = 2*n*tau/(k*tau^2 +2*n);
-
-    model.w = (1-gamma) * model.w   + gamma * sumw;
-    ell     = (1-gamma) * ell       + gamma * sumell;        
-
+    
     % 9) Optionally, update the weighted average:
     if (options.do_weighted_averaging)
         rho = 2/(k+2); % results in each iterate w^(k) weighted proportional to k
@@ -284,6 +292,7 @@ for p=1:options.num_passes
     % timing the optimization, since it is very costly!
     % (makes the code about 3x slower given the additional 2 passes
     % through the data).
+    %if (options.debug &&  mod(k*tau, n) == 0)
     if (options.debug && k >= debug_iter)
         if (options.do_weighted_averaging)
             model_debug.w = wAvg;
@@ -363,6 +372,9 @@ if (options.do_weighted_averaging)
 else
     model.ell = ell;
 end
+
+stats.k = k;
+stats.time = toc();
 
 end % solverBCFW
 
