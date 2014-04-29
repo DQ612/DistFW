@@ -11,6 +11,7 @@ namespace fw {
 // ICML 2013). For distributedFW this is the solver on each machine / thread.
 class BCFWSolver {
 public:
+  BCFWSolver();
 
 private:
 

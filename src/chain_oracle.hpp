@@ -5,26 +5,30 @@
 #define FW_CHAINORACLE_HPP
 
 #include "abstract_svm_oracle.hpp"
+#include <vector>
 
 namespace fw {
 
 class ChainOracle : public AbstractSVMOracle {
-    public:
-        Feature GenerateFeatureMap(const Feature& x, const Feature& y);
+public:
+  ChainOracle() { }
 
-        double Loss(const Feature& y_truth, const Feature& y_predict);
+  std::vector<double> GenerateFeatureMap(const std::vector<double>& x,
+      const std::vector<double>& y);
 
-        Feature MaxOracle(const Feature& w, const Feature& x_i,
-                const Feature& y_i, int num_y_states);
+  double Loss(const std::vector<double>& y_truth,
+      const std::vector<double>& y_predict);
 
-        ChainOracle(){}
+  std::vector<double> MaxOracle(const std::vector<double>& w,
+      const std::vector<double>& x_i,
+      const std::vector<double>& y_i, int num_y_states);
 
-    private:
-        Feature logDecode(
-                const std::vector<double>& logNodePot, 
-                const std::vector<double>& logEdgePot,
-                const unsigned num_y_states,
-                const unsigned num_nodes);
+private:
+  std::vector<double> logDecode(
+      const std::vector<double>& logNodePot, 
+      const std::vector<double>& logEdgePot,
+      const unsigned num_y_states,
+      const unsigned num_nodes);
 };
 
 }
