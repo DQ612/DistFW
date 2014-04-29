@@ -28,13 +28,18 @@ param.featureFn = @chain_featuremap;
 options = [];
 options.lambda = 1e-2;
 options.gap_threshold = 0.1; % duality gap stopping criterion
-options.num_passes = 10000; % max number of passes through data
-options.do_line_search = 1;
-options.debug = 1; % for displaying more info (makes code about 3x slower)
-options.tau = 0.5;
+options.num_passes = 100; % max number of passes through data
+options.do_line_search = 0; % TODO
+options.debug = 0; % for displaying more info (makes code about 3x slower)
 %% run the solver
-%[model, progress] = solverBCFW(param, options);
-[model, progress] = solverMiniFW(param, options);
+[model, progress] = solverBCFW(param, options);
+
+%%
+options.num_passes = 60000; % max number of passes through data
+options.tau = 0;
+n = 626; tau = max(1,n*options.tau);
+options.gap_check = 10*n/tau;
+%[model, progress] = solverMiniFW(param, options);
 %[model, progress] = solverSSG(param, options);
 
 %% loss on train set

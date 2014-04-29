@@ -228,7 +228,7 @@ tic();
 
 
 % === Main loop ====
-tau=floor(options.tau * n);
+tau=max(1, floor(options.tau * n));
 k=0; % same k as in paper
 gap_check_counter = 1; % keeps track of how many passes through the data since last duality gap check...
 for p=1:options.num_passes
