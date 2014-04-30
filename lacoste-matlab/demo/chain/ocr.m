@@ -11,7 +11,7 @@ addpath('helpers');
 % training set, ocr2: all but one fold in training set
 % -- ocr2 is the one that we have used in our experiments in the 
 % ICML 2013 paper)
-data_name = 'ocr';
+data_name = 'ocr2';
 [patterns_train, labels_train, patterns_test, labels_test] = loadOCRData(data_name, '../../data/');
 
 %% == run one of the solvers on the problem
@@ -38,13 +38,15 @@ options.do_weighted_averaging =0;
 %%
 options.num_passes = 1000000; % max number of passes through data
 options.tau = 1/626;
-n = 626; tau = max(1,n*options.tau);
+%n = 626;
+n = 6251;
+tau = max(1,n*options.tau);
 options.gap_check = 10*n/tau;
 taus = [1 5 10 20 40 80 160];
 
 for i=1:numel(taus)
     options.tau = taus(i)/n;    
-    options.gap_check = 10*n/taus(i);
+    options.gap_check = 10*/taus(i);
     [model, progress, stats] = solverMiniFW(param, options);
     times(i) = stats.time;
     epochs(i) = stats.k;    
