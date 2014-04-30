@@ -42,28 +42,29 @@ options.tau = 1/626;
 n = 6251;
 tau = max(1,n*options.tau);
 options.gap_check = 10*n/tau;
-taus = [1 5 10 20 40 80 160];
+%taus = [1 5 10 20 40 80 160];
+taus = [1,10,50,100,150,200,300,400,500]
 
 for i=1:numel(taus)
-    options.tau = taus(i)/n;    
-    options.gap_check = 10*/taus(i);
+    options.tau = taus(i)/n;
+    options.gap_check = 5*n/taus(i);
     [model, progress, stats] = solverMiniFW(param, options);
     times(i) = stats.time;
-    epochs(i) = stats.k;    
+    epochs(i) = stats.k;
 end
 %[model, progress] = solverSSG(param, options);
 
 %%
 
 figure
-plot(taus(1:5), epochs(1:5))
+plot(taus, epochs)
 xlabel('\tau','FontSize', 16);
 ylabel('\tau Epochs', 'FontSize', 16);
 title('Variation of number of epochs with \tau','FontSize', 16);
 
 figure
 datapasses = epochs .* taus/n;
-plot(taus(1:5),datapasses(1:5));
+plot(taus,datapasses);
 xlabel('\tau','FontSize', 16);
 ylabel('Data Passes', 'FontSize', 16);
 title('Variation of # data passes with \tau','FontSize', 16);
