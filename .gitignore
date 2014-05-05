@@ -1,0 +1,7 @@
+*.DS_Store
+*hide
+*.sw*
+*.pyc
+*.Rapp.history
+*.*~
+*.out
