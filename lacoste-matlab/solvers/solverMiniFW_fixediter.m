@@ -337,6 +337,8 @@ for p=1:options.num_passes
     end
     
     % checking duality gap stopping criterion if required:
+
+
     if (options.gap_check && gap_check_counter >= options.gap_check)
         gap_check_counter = 0;
         
@@ -352,15 +354,25 @@ for p=1:options.num_passes
         % compute gap:
         gap = duality_gap(param, maxOracle, model_debug, lambda);
         % for later: [gap, w_s, ell_s] = duality_gap(param, maxOracle, model, lambda);
-        if gap <= options.gap_threshold
-            fprintf('Duality gap below threshold -- stopping!\n')
-            fprintf('current gap: %g, gap_threshold: %g\n', gap, options.gap_threshold)
-            fprintf('Reached after pass: %d (iteration %d).\n', p, k)
-            break % exit loop!
-        else
-            % to implement later: do a batch FW step with w_s & ell_s above
-            fprintf('Duality gap check: gap = %g at pass %d (iteration %d)\n', gap, p, k)
-        end
+
+        %%%%%%%%%%%%
+        %% Commenting the following out for now --- replace back in later
+        %% (in order to do experiments for a fixed number of iterations instead of until-convergence)
+        %%%%%%%%%%%%
+        %if gap <= options.gap_threshold
+            %fprintf('Duality gap below threshold -- stopping!\n')
+            %fprintf('current gap: %g, gap_threshold: %g\n', gap, options.gap_threshold)
+            %fprintf('Reached after pass: %d (iteration %d).\n', p, k)
+            %break % exit loop!
+        %else
+            %% to implement later: do a batch FW step with w_s & ell_s above
+            %fprintf('Duality gap check: gap = %g at pass %d (iteration %d)\n', gap, p, k)
+        %end
+        %%%%%%%%%%%
+        %%% And adding the following line (remove later)
+        %%%%%%%%%%%
+        fprintf('Duality gap check: gap = %g at pass %d (iteration %d)\n', gap, p, k)
+
     end % end of gap_check section
     gap_check_counter = gap_check_counter+1;
     
@@ -375,6 +387,20 @@ end
 
 stats.k = k;
 stats.time = toc();
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%% returning duality gap
+if (options.do_weighted_averaging)
+    model_debug.w = wAvg;
+    model_debug.ell = lAvg;
+else
+    model_debug.w = model.w;
+    model_debug.ell = ell;
+end
+stats.gap = duality_gap(param, maxOracle, model_debug, lambda)
+%%%%%%%%%%%%%%%%%%%%%%%
+
 
 end % solverBCFW
 
