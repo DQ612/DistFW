@@ -63,7 +63,7 @@ ylim([-0.2,1.2])
 plot(ha(3),X);
 ylim([-0.2,1.2])
 set(ha(1:3),'XTickLabel',''); set(ha,'YTickLabel','')
-saveas(h,'Illustration_fused.pdf');
+saveas(h,'Illustration_fused.png');
 
 %%
 % figure(3)
