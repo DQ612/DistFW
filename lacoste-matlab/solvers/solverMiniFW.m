@@ -293,7 +293,7 @@ for p=1:options.num_passes
     % (makes the code about 3x slower given the additional 2 passes
     % through the data).
     %if (options.debug &&  mod(k*tau, n) == 0)
-    if (options.debug && k >= debug_iter)
+    if (options.debug && k >= debug_iter/tau)
         if (options.do_weighted_averaging)
             model_debug.w = wAvg;
             model_debug.ell = lAvg;
@@ -310,7 +310,7 @@ for p=1:options.num_passes
 
         progress.primal = [progress.primal; primal];
         progress.dual = [progress.dual; f];
-        progress.eff_pass = [progress.eff_pass; k/n];
+        progress.eff_pass = [progress.eff_pass; k*tau/n];
         progress.train_error = [progress.train_error; train_error];
         if (isstruct(options.test_data) && isfield(options.test_data, 'patterns'))
             param_debug = param;
