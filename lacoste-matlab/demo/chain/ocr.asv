@@ -41,7 +41,7 @@ n = 626;
 options.num_passes = n*1000; % max number of passes through data
 %n = 6251;
 %taus = [1,100,200,300,400];
-taus = [1,2,3,5,8,13,21,34,55,89];
+taus = [1,10];
 for i=1:numel(taus)
     fprintf('tau=%d\n', taus(i))
     options.tau = taus(i)/n;
@@ -54,27 +54,22 @@ end
 
 %%
 
-% figure
-% plot(taus, epochs)
-% xlabel('\tau','FontSize', 16);
-% ylabel('\tau Epochs', 'FontSize', 16);
-% title('Variation of number of epochs with \tau','FontSize', 16);
-% 
-% figure
-% datapasses = epochs .* taus/n;
-% plot(taus,datapasses);
-% xlabel('\tau','FontSize', 16);
-% ylabel('Data Passes', 'FontSize', 16);
-% title('Variation of # data passes with \tau','FontSize', 16);
+figure
+plot(taus, epochs)
+xlabel('\tau','FontSize', 16);
+ylabel('\tau Epochs', 'FontSize', 16);
+title('Variation of number of epochs with \tau','FontSize', 16);
+
+figure
+datapasses = epochs .* taus/n;
+plot(taus,datapasses);
+xlabel('\tau','FontSize', 16);
+ylabel('Data Passes', 'FontSize', 16);
+title('Variation of # data passes with \tau','FontSize', 16);
 
 % speed-up plot
-% figure
-speedups = epochs(1) ./ epochs;
-plot(taus,taus,taus,speedups);
-xlabel('\tau','FontSize', 16);
-ylabel('Speedup', 'FontSize', 16);
-title('Speedup with distribution','FontSize', 16);
-
+figure
+datapasses = 1;
 
 
 %% loss on train set

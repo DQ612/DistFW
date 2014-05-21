@@ -1,4 +1,4 @@
-function [model, progress, stats] = solverBCFW(param, options)
+function [model, progress, stats] = solverMiniFW(param, options)
 % [model, progress] = solverBCFW(param, options)
 %
 % Solves the structured support vector machine (SVM) using the block-coordinate
@@ -241,6 +241,8 @@ for p=1:options.num_passes
     w_tilde = model.w; % reference iterate
     model_tilde.w = w_tilde;    
     
+    % wMat is available on the server only, not on the workers
+    
     for dummy = 1:tau
         % (each numbered comment correspond to a line in algorithm 4)
         % 1) Picking random example:
@@ -263,8 +265,14 @@ for p=1:options.num_passes
         % maxOracle or in the featuremap
         assert((loss_i - w_tilde'*psi_i) >= -1e-12);  
     
-        % 4) get the step-size gamma:        
-        gamma = 2*n*tau/(k*tau^2 +2*n);
+        % 4) get the step-size gamma (on the server):    
+        if (options.do_line_search)            
+            gamma_opt = (model.w'*(wMat(:,i) - w_s) - 1/lambda*(ellMat(i) - ell_s))...
+                              / ( norm(wMat(:,i) - w_s)^2 +eps);
+            gamma = max(0,min(1,gamma_opt)); % truncate on [0,1]
+        else
+            gamma = 2*n*tau/(k*tau^2 +2*n);
+        end
         
         % 5-6-7-8) finally update the weights and ell variables
         % workers send w_s, ell_s to server and server computes

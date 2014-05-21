@@ -1,4 +1,4 @@
-function [model, progress, stats] = solverBCFW(param, options)
+function [model, progress, stats] = solverMiniFW_fixediter(param, options)
 % [model, progress] = solverBCFW(param, options)
 %
 % Solves the structured support vector machine (SVM) using the block-coordinate
