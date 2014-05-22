@@ -3,6 +3,7 @@
 % the digit as unary features and a transition matrix of size num_states^2 as
 % a pairwise potential. Additionally, we include a unary bias term for the first
 % and last symbol in the sequence.
+speedups_gap1 = speedups;
 clear
 addpath(genpath('../../solvers/'));
 addpath('helpers');
@@ -11,7 +12,7 @@ addpath('helpers');
 % training set, ocr2: all but one fold in training set
 % -- ocr2 is the one that we have used in our experiments in the 
 % ICML 2013 paper)
-data_name = 'ocr';
+data_name = 'ocr2';
 [patterns_train, labels_train, patterns_test, labels_test] = loadOCRData(data_name, '../../data/');
 
 %% == run one of the solvers on the problem
@@ -26,8 +27,8 @@ param.featureFn = @chain_featuremap;
 
 % options structure:
 options = [];
-options.lambda = 1e-2;
-options.gap_threshold = 0.1; % duality gap stopping criterion
+options.lambda = 1;
+options.gap_threshold = 2; % duality gap stopping criterion
 options.num_passes = 100; % max number of passes through data
 options.do_line_search = 1; % TODO
 options.debug = 0; % for displaying more info (makes code about 3x slower)
@@ -37,11 +38,17 @@ options.do_weighted_averaging =0;
 
 %%
 
-n = 626;
+if (strcmp(data_name, 'ocr'))
+    n = 626;
+else
+    n = 6251;
+end
+
 options.num_passes = n*1000; % max number of passes through data
-%n = 6251;
+
 %taus = [1,100,200,300,400];
-taus = [1,2,3,5,8,13,21,34,55,89];
+%taus = [1,2,3,5,8,13,21,34,55,89];%,144,233];
+taus = [1,10,50,100, 150, 200, 300, 800, 1600, 3126, n];
 for i=1:numel(taus)
     fprintf('tau=%d\n', taus(i))
     options.tau = taus(i)/n;
@@ -96,8 +103,8 @@ avg_loss = avg_loss / numel(patterns_test);
 fprintf('average loss on the test set: %f.\n', avg_loss);
 
 % plot the progress of the solver
-plot(progress.eff_pass, progress.primal, 'r-'); % primal
-hold on;
-plot(progress.eff_pass, progress.dual, 'b--'); % dual
-hold off;
-xlabel('effective passes');
+% plot(progress.eff_pass, progress.primal, 'r-'); % primal
+% hold on;
+% plot(progress.eff_pass, progress.dual, 'b--'); % dual
+% hold off;
+% xlabel('effective passes');
