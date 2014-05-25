@@ -8,7 +8,7 @@ using namespace fw;
 using namespace std;
 
 std::vector<double> ChainOracle::GenerateFeatureMap(
-    const std::vector<double>& x, const std::vector<double>& y){
+    const std::vector<double>& x, const std::vector<int>& y){
   const size_t a = 26;           // a for size of alphabet
   const size_t p = x.size() / a; // p for number of pixels
   const size_t wl = y.size();    // wl for word length
@@ -40,12 +40,12 @@ std::vector<double> ChainOracle::GenerateFeatureMap(
   return phi;
 }
 
-double ChainOracle::Loss(const std::vector<double>& y_truth,
-    const std::vector<double>& y_predict) {
+double ChainOracle::Loss(const std::vector<int>& y_truth,
+    const std::vector<int>& y_predict) {
 
   double loss = 0;
-  std::vector<double>::const_iterator t = y_truth.begin();
-  std::vector<double>::const_iterator p = y_predict.begin();
+  std::vector<int>::const_iterator t = y_truth.begin();
+  std::vector<int>::const_iterator p = y_predict.begin();
   for(; t != y_truth.end(); t++, p++ ){
     if( *t != *p )
       loss += 1;
@@ -55,7 +55,7 @@ double ChainOracle::Loss(const std::vector<double>& y_truth,
 
 std::vector<double> ChainOracle::MaxOracle(const std::vector<double>& w,
     const std::vector<double>& x_i,
-    const std::vector<double>& y_i, int num_y_states){
+    const std::vector<int>& y_i, int num_y_states){
   const size_t a = num_y_states;
   const size_t p = x_i.size() / a;
   const size_t wl = y_i.size();

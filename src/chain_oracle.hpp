@@ -14,14 +14,14 @@ public:
   ChainOracle() { }
 
   std::vector<double> GenerateFeatureMap(const std::vector<double>& x,
-      const std::vector<double>& y);
+      const std::vector<int>& y);
 
-  double Loss(const std::vector<double>& y_truth,
-      const std::vector<double>& y_predict);
+  double Loss(const std::vector<int>& y_truth,
+      const std::vector<int>& y_predict);
 
   std::vector<double> MaxOracle(const std::vector<double>& w,
       const std::vector<double>& x_i,
-      const std::vector<double>& y_i, int num_y_states);
+      const std::vector<int>& y_i, int num_y_states);
 
 private:
   std::vector<double> logDecode(
